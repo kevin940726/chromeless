@@ -42,7 +42,10 @@ export default class LocalChrome implements Chrome {
     const target = await CDP.New({
       port: this.chromeInstance.port,
     })
-    return await CDP({ target })
+    return await CDP({
+      port: this.chromeInstance.port,
+      target,
+    })
   }
 
   private async connectToChrome(): Promise<Client> {
@@ -50,7 +53,11 @@ export default class LocalChrome implements Chrome {
       port: this.options.cdp.port,
       host: this.options.cdp.host,
     })
-    return await CDP({ target })
+    return await CDP({
+      port: this.options.cdp.port,
+      host: this.options.cdp.host,
+      target,
+    })
   }
 
   private async setViewport(client: Client) {
@@ -102,7 +109,11 @@ export default class LocalChrome implements Chrome {
     const { client } = await this.runtimeClientPromise
 
     if (this.options.cdp.closeTab) {
-      await CDP.Close({ id: client.target.id })
+      await CDP.Close({
+        host: client.host,
+        port: client.port,
+        id: client.target.id,
+      })
     }
 
     if (this.chromeInstance) {
